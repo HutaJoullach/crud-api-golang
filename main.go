@@ -1,12 +1,11 @@
 package main
 
-import(
+import (
+	"encoding/json"
 	"fmt"
 	"log"
-	"encoding/json"
-	"math/rand"
 	"net/http"
-	"strconv"
+
 	"github.com/gorilla/mux"
 )
 
@@ -24,8 +23,16 @@ type Director struct{
 
 var movies []Movie
 
+func getMovies(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(movies)
+}
+
 func main(){
 	r := mux.NewRouter()
+
+	movies = append(movies, Movie{ID: "1", Isbn: "438227", Title: "The Sound of Ashes", Director: &Director{Firstname: "Odell", Lastname: "Sutton"}})
+	movies = append(movies, Movie{ID: "2", Isbn: "454587", Title: "Journey to the Earth", Director: &Director{Firstname: "Emmett", Lastname: "Mata"}})
 
 	r.HandleFunc("/movies", getMovies).Methods("GET")
 	r.HandleFunc("/movies/{id}", getMovie).Methods("GET")
